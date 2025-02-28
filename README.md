@@ -1,6 +1,6 @@
 # HRViT
-Code for MICCAI2025 paper
-To be update
+Code for MICCAI2025 paper.
+To be updated
 
 ## Package Versions
 ```
@@ -18,3 +18,16 @@ torchprofile==0.0.4
 1. Download BTCV from https://www.synapse.org/#!Synapse:syn3376386 and MSD BraTS from http://medicaldecathlon.com/
 2. Additionally for BTCV, copy the `lib/data/transunet.json` into the data folder.
 3. Set the `data_path` in the config file as the above data folder.
+
+## Acknowledgment
+Our code is built on SCD.
+```
+@inproceedings{zhou2023token,
+  title={Token Sparsification for Faster Medical Image Segmentation},
+  author={Zhou, Lei and Liu, Huidong and Bae, Joseph and He, Junjun and Samaras, Dimitris and Prasanna, Prateek},
+  booktitle={International Conference on Information Processing in Medical Imaging},
+  pages={743--754},
+  year={2023},
+  organization={Springer}
+}
+```
