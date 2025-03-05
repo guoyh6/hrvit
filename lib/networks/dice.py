@@ -724,20 +724,12 @@ class DiceCELoss(_Loss):
                 pooled_avg = F.avg_pool3d(target, (8, 8, 8))
                 gt_score = (pooled_max != pooled_avg).float()
 
-                # gt_token_pred = pooled_max.clone()
-                # gt_token_pred[pooled_max != pooled_avg] = 14.
-
-                # ce_pixel = ce_loss_value.detach()
-                # ce_patch = F.avg_pool3d(ce_pixel.unsqueeze(1), (8, 8, 8))
-                # ce_max = torch.max(ce_patch.view(B, -1), dim=1)[0]
-                # # ce_valid = torch.zeros_like(ce_patch)
-                # # ce_valid[ce_patch > 0.05] = 1   # v0版本没有ce_valid
-                # gt_ce_token = (ce_patch / ce_max[:, None, None, None, None]) * gt_score
-            # score_loss = F.mse_loss(pred_score.sigmoid().reshape(B, 1, n, n, n), gt_ce_token)
+                gt_token_pred = pooled_max.clone()
+                gt_token_pred[pooled_max != pooled_avg] = 14.
 
             score_loss = F.binary_cross_entropy_with_logits(pred_score.reshape(B, 1, n, n, n), gt_score)
-            # token_loss = torch.mean(self.ce(token_predict.reshape(B, -1, n, n, n), gt_token_pred))
-            total_loss: torch.Tensor = score_loss + self.lambda_dice * dice_loss + self.lambda_ce * ce_loss  # + token_loss
+            token_loss = torch.mean(self.ce(token_predict.reshape(B, -1, n, n, n), gt_token_pred))
+            total_loss: torch.Tensor = score_loss + self.lambda_dice * dice_loss + self.lambda_ce * ce_loss + token_loss
         else:
             total_loss: torch.Tensor = self.lambda_dice * dice_loss + self.lambda_ce * ce_loss
 
