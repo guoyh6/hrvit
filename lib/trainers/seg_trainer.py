@@ -378,10 +378,8 @@ class SegTrainer(BaseTrainer):
 
     @staticmethod
     def train_score_batch(model, samples, target, criterion):
-        outputs, pred_score = model(samples, target, return_score=True)
-        loss = criterion(outputs, target, pred_score)
-        # outputs, pred_score, token_predict = model(samples, target, return_score=True)
-        # loss = criterion(outputs, target, pred_score, token_predict)
+        outputs, pred_score, token_predict = model(samples, target, return_score=True)
+        loss = criterion(outputs, target, pred_score, token_predict)
         return loss
 
     @torch.no_grad()
