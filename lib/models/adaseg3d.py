@@ -63,7 +63,7 @@ class AdaSeg3D(nn.Module):
                                              depth=args.compl_depth,
                                              num_heads=args.compl_num_heads,
                                              num_layers=len(tp_loc) + 1)
-        # self.token_predictor = nn.Linear(args.compl_embed_dim, args.num_classes+1)
+        self.token_predictor = nn.Linear(args.compl_embed_dim, args.num_classes+1)
         self.decoder = decoder(in_channels=args.in_chans,
                                out_channels=args.num_classes,
                                img_size=input_size,
@@ -112,14 +112,14 @@ class AdaSeg3D(nn.Module):
         pred_score = torch.cat(scores_list, dim=0)
         policy0 = torch.cat(policy0_list, dim=0)
         policy1 = torch.cat(policy1_list, dim=0)
-        # token_predict = self.token_predictor(x).permute(0, 2, 1).contiguous()
+        token_predict = self.token_predictor(x).permute(0, 2, 1).contiguous()
         # forward decoder
         x = self.decoder(x_in, x, [x, ] * self.args.encoder_depth)  # [B, gh*gw*gd, ph*pw*pd*C]
 
         if vis_policy:
             return x, [policy0, policy1]
         elif return_score:
-            return x, pred_score  # , token_predict
+            return x, pred_score, token_predict
         else:
             return x
 
@@ -143,7 +143,7 @@ class AdaSeg3D(nn.Module):
             torch.cuda.synchronize()
             time_meters['compl'].append(time.perf_counter() - s_time)
 
-        # token_predict = self.token_predictor(x).permute(0, 2, 1).contiguous()
+        token_predict = self.token_predictor(x).permute(0, 2, 1).contiguous()
 
         # forward decoder
         s_time = time.perf_counter()
@@ -155,7 +155,7 @@ class AdaSeg3D(nn.Module):
         if vis_policy:
             return x, policy_list
         elif return_score:
-            return x, pred_score  # , token_predict
+            return x, pred_score, token_predict
         else:
             return x
 
